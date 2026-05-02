@@ -20,100 +20,87 @@ const SCREENSHOTS = [
 ];
 
 export const ChatMemories = () => {
-  const sectionRef = useRef(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    const cards = containerRef.current.querySelectorAll(".chat-card");
+    let mm = gsap.matchMedia();
 
-    if (isMobile) {
-      // Pinning and Stacking logic for Mobile
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top top",
-          end: `+=${cards.length * 100}%`,
-          pin: true,
-          scrub: 1,
-        },
-      });
-
-      cards.forEach((card, i) => {
-        if (i === 0) return; // First card is already visible
-        tl.fromTo(card, 
-          { y: "120vh", rotation: i % 2 === 0 ? 5 : -5 },
-          { y: i * 5, rotation: i % 2 === 0 ? 2 : -2, duration: 1 },
-          "-=0.5" // Overlap animations slightly
-        );
-      });
-    } else {
-      // Data-speed parallax for Desktop
-      const images = containerRef.current.querySelectorAll("[data-speed]");
-      images.forEach((img) => {
-        const speed = parseFloat(img.getAttribute("data-speed")) || 1;
-        gsap.fromTo(img,
+    // Desktop only parallax
+    mm.add("(min-width: 768px)", () => {
+      const elements = gsap.utils.toArray(".parallax-item");
+      elements.forEach((el) => {
+        const speed = parseFloat(el.getAttribute("data-speed")) || 1;
+        gsap.fromTo(el,
           { y: 50 * speed },
           {
             y: -150 * speed,
             ease: "none",
             scrollTrigger: {
-              trigger: img,
+              trigger: el,
               start: "top bottom",
               end: "bottom top",
               scrub: true,
-            },
+            }
           }
         );
       });
-    }
+    });
 
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => mm.revert();
   }, []);
 
   return (
-    <Section id="chat" className="bg-[#0B1020] overflow-hidden min-h-screen" ref={sectionRef}>
-      <div className="text-center mb-12 relative z-20 pt-10">
-        <h2 className="text-h2 font-bold text-white mb-2">Behind the Scenes</h2>
-        <p className="text-primary font-bold uppercase tracking-widest text-xs">
-          Late Nights & Group Chat Chaos
-        </p>
+    <Section id="chat" className="bg-[#0B1020] overflow-hidden py-32">
+      <div className="text-center mb-24 relative z-10">
+        <h2 className="text-h2 font-bold text-white mb-4">Behind the Scenes</h2>
+        <p className="text-primary font-bold uppercase tracking-widest text-sm">Late Nights & Group Chat Chaos</p>
       </div>
 
-      <div
+      <div 
         ref={containerRef}
-        className="relative w-full max-w-4xl mx-auto h-[70vh] flex items-center justify-center"
+        className="relative w-full max-w-7xl mx-auto px-6"
       >
-        {/* Desktop View (Grid) - Hidden on mobile by GSAP logic or CSS */}
-        <div className="hidden md:columns-2 lg:columns-3 gap-8 space-y-8 w-full">
-          {SCREENSHOTS.map((src, i) => {
-            const speeds = [0.4, 1.2, 0.8, 1.5, 0.6, 2.0, 1.1, 0.7, 1.3, 0.9];
-            return (
-              <div key={i} data-speed={speeds[i % speeds.length]} className="break-inside-avoid bg-white/5 rounded-2xl overflow-hidden shadow-2xl border border-white/10 mb-8">
-                <img src={src} className="w-full h-auto grayscale-[30%]" alt="" />
+        {/* Mobile View */}
+        <div className="md:hidden flex flex-col gap-12">
+          {SCREENSHOTS.map((src, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-white/5 rounded-2xl overflow-hidden shadow-2xl border border-white/10"
+            >
+              <img src={src} alt="" className="w-full h-auto" />
+              <div className="p-4 bg-white/[0.02]">
+                <span className="text-white/20 text-[8px] font-black tracking-widest uppercase">Novara 11 // Memory</span>
               </div>
-            );
-          })}
+            </motion.div>
+          ))}
         </div>
 
-        {/* Mobile View (Stacking Cards) */}
-        <div className="md:hidden relative w-full h-full flex items-center justify-center px-6">
-          {SCREENSHOTS.map((src, i) => (
-            <div
-              key={i}
-              className="chat-card absolute w-[85vw] bg-white/5 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10"
-              style={{ zIndex: i }}
-            >
-              <img
-                src={src}
-                alt={`Chat memory ${i}`}
-                className="w-full h-auto"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B1020] via-transparent to-transparent opacity-40" />
-            </div>
-          ))}
+        {/* Desktop View: Fixed Visibility */}
+        <div className="hidden md:block">
+          <div className="md:columns-2 lg:columns-3 gap-8 space-y-8">
+            {SCREENSHOTS.map((src, i) => {
+              const speeds = [0.4, 1.2, 0.8, 1.5, 0.6, 2.0, 1.1, 0.7, 1.3, 0.9];
+              return (
+                <div 
+                  key={i} 
+                  data-speed={speeds[i % speeds.length]} 
+                  className="parallax-item break-inside-avoid bg-white/5 rounded-2xl overflow-hidden shadow-2xl border border-white/10 mb-8"
+                >
+                  <img 
+                    src={src} 
+                    className="w-full h-auto grayscale-[30%] hover:grayscale-0 transition-all duration-700" 
+                    alt="" 
+                  />
+                  <div className="p-4 bg-white/[0.02]">
+                    <span className="text-white/20 text-[8px] font-black tracking-widest uppercase">Novara 11 // Memory</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
