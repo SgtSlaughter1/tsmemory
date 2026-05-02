@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --fs-h1: clamp(3rem, 9vw, 6.5rem);
+  --fs-h2: clamp(2.2rem, 6vw, 4.5rem);
+  --fs-h3: clamp(1.6rem, 4vw, 3rem);
+  --fs-h4: clamp(1.2rem, 3vw, 2rem);
+  --fs-body: clamp(1rem, 2vw, 1.125rem);
+  --bg-start: #0B1020;
+  --bg-struggle: #111827;
+  --bg-mid: #F1F5F9;
+  --bg-end: #F8FAFC;
+  --primary: #14B8A6;
+  --primary-dark: #0F766E;
+  --primary-soft: #CCFBF1;
+  --accent: #F59E0B;
+  --accent-soft: #FEF3C7;
+  --text-dark: #0F172A;
+  --text-light: #F8FAFC;
+  --text-muted: #64748B;
+  --text-soft: #CBD5E1;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-start);
+  color: var(--text-light);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  line-height: 1.1;
+}
+
+.text-gradient-teal {
+  background: linear-gradient(135deg, var(--primary), var(--primary-soft));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
